@@ -52,8 +52,11 @@ time.sleep(2) # Page-Loading delay
 driver.get(DISCORD_CHANNEL)
 
 # # Text Input Automation
+print(f"Current URL: {driver.current_url}")
 time.sleep(3) # Page-Loading delay
+
 channel_text_field = driver.switch_to.active_element  # Focused element should be the text input field
+print(f"Found element: {channel_text_field}")
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
 # time.sleep(2) # Page-Loading delay
