@@ -51,6 +51,9 @@ try:
         print("Login successful!")
     except Exception as e:
         print("Login failed or took too long. Error:", str(e))
+        # Take a screenshot of the failed login attempt for further analysis
+        driver.save_screenshot("login_attempt.png")
+        print("Screenshot taken after login attempt.")
         # Additional step: Check if there's a CAPTCHA or other issue
         try:
             captcha_element = driver.find_element(By.XPATH, "//*[text()='I am human']")
@@ -62,6 +65,9 @@ try:
 
 except Exception as e:
     print("Error during login process:", str(e))
+    # Take a screenshot of the failed login attempt for further analysis
+    driver.save_screenshot("login_attempt.png")
+    print("Screenshot taken after login attempt.")
     driver.quit()
     exit(1)
 
