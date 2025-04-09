@@ -51,8 +51,6 @@ submit_button.click()
 time.sleep(2) # Page-Loading delay
 driver.get(DISCORD_CHANNEL)
 
-input('Enter: ')
-
 # # Text Input Automation
 time.sleep(3) # Page-Loading delay
 channel_text_field = driver.find_element(by=By.XPATH, value="//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div[3]/main/form/div/div/div[2]/div/div[3]/div/div[2]/div")
