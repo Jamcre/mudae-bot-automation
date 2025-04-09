@@ -1,6 +1,7 @@
 # Imports
 import os
 import time
+import platform
 import chromedriver_autoinstaller
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -14,10 +15,14 @@ DISCORD_EMAIL = os.getenv("DISCORD_EMAIL")
 DISCORD_PASS = os.getenv("DISCORD_PASS")
 DISCORD_CHANNEL = "https://discord.com/channels/756710284298551346/1225299689994321951"
 
-# Start Display (for headless)
-display = Display(visible=0, size=(1200, 800))
-display.start()
-
+# Check for OS and set display settings accordingly
+if platform.system() == "Windows":
+    headless_mode = False  # No need for virtual display on Windows
+else:
+    # Start Display (for headless mode in Linux or macOS)
+    display = Display(visible=0, size=(1200, 800))
+    display.start()
+    headless_mode = True
 # Install Chrome driver
 chromedriver_autoinstaller.install()
 
@@ -46,10 +51,11 @@ submit_button.click()
 time.sleep(2) # Page-Loading delay
 driver.get(DISCORD_CHANNEL)
 
+input('Enter: ')
 
 # # Text Input Automation
-time.sleep(5) # Page-Loading delay
-channel_text_field = driver.find_element(by=By.CSS_SELECTOR, value="div[aria-label='Message #mudae-s3'][contenteditable='true']")
+time.sleep(3) # Page-Loading delay
+channel_text_field = driver.find_element(by=By.XPATH, value="//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div[2]/div/div/div/div[2]/div[2]/div/div/div[3]/main/form/div/div/div[2]/div/div[3]/div/div[2]/div")
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
 # time.sleep(2) # Page-Loading delay
