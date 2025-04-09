@@ -48,7 +48,7 @@ driver.get(DISCORD_CHANNEL)
 
 
 # # Text Input Automation
-time.sleep(2) # Page-Loading delay
+time.sleep(5) # Page-Loading delay
 channel_text_field = driver.find_element(by=By.CSS_SELECTOR, value="[aria-label='Message #mudae-s3']")
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
