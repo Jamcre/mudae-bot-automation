@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 # Constants
 load_dotenv()
@@ -30,62 +28,33 @@ driver = webdriver.Chrome(options=options)
 driver.get("https://discord.com/login")
 
 # Discord Log-in
-wait = WebDriverWait(driver, 15)  # Explicit wait increased to 15 seconds
-
-try:
-    email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
-    pass_field = driver.find_element(by=By.NAME, value="password")
-    email_field.send_keys(DISCORD_EMAIL)
-    pass_field.send_keys(DISCORD_PASS)
-
-    # Wait for submit button to be clickable and click
-    submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
-    submit_button.click()
-
-    print("Login submitted, waiting for next steps...")
-
-    # Wait for any sign of login success
-    try:
-        # Look for the profile icon or a page element that signifies being logged in
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='User Settings']")))  # Profile icon
-        print("Login successful!")
-    except Exception as e:
-        print("Login failed or took too long. Error:", str(e))
-        # Take a screenshot of the failed login attempt for further analysis
-        driver.save_screenshot("login_attempt.png")
-        print("Screenshot taken after login attempt.")
-        # Additional step: Check if there's a CAPTCHA or other issue
-        try:
-            captcha_element = driver.find_element(By.XPATH, "//*[text()='I am human']")
-            print("Captcha detected: Please resolve manually.")
-        except:
-            print("No CAPTCHA detected, but login still failed.")
-        driver.quit()
-        exit(1)
-
-except Exception as e:
-    print("Error during login process:", str(e))
-    # Take a screenshot of the failed login attempt for further analysis
-    driver.save_screenshot("login_attempt.png")
-    print("Screenshot taken after login attempt.")
-    driver.quit()
-    exit(1)
+time.sleep(2) # Page-Loading delay
+email_field = driver.find_element(by=By.NAME, value="email")
+pass_field = driver.find_element(by=By.NAME, value="password")
+email_field.send_keys(DISCORD_EMAIL)
+pass_field.send_keys(DISCORD_PASS)
+time.sleep(2) # Page-Loading delay
+submit_button = driver.find_element(by= By.XPATH, value="//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")
+submit_button.click()
 
 # Discord Navigation
+time.sleep(2) # Page-Loading delay
 driver.get(DISCORD_CHANNEL)
 
-# Text Input Automation
-channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Message #mudae-s3']")))
+
+# # Text Input Automation
+time.sleep(2) # Page-Loading delay
+channel_text_field = driver.find_element(by=By.CSS_SELECTOR, value="[aria-label='Message #mudae-s3']")
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
-
-# Send next messages
+time.sleep(2) # Page-Loading delay
 channel_text_field.send_keys('$daily')
 channel_text_field.send_keys(Keys.ENTER)
-
+time.sleep(2) # Page-Loading delay
 channel_text_field.send_keys('$dk')
 channel_text_field.send_keys(Keys.ENTER)
 
 # Close Browser
+time.sleep(2) # Page-Loading delay
 print('Mudae Automation Complete')
 driver.quit()
