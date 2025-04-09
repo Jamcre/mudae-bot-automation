@@ -1,5 +1,6 @@
 # Imports
 import os
+import time
 import chromedriver_autoinstaller
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -30,22 +31,37 @@ driver.get("https://discord.com/login")
 
 # Discord Log-in
 wait = WebDriverWait(driver, 15)  # Explicit wait increased to 15 seconds
-email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
-pass_field = driver.find_element(by=By.NAME, value="password")
-email_field.send_keys(DISCORD_EMAIL)
-pass_field.send_keys(DISCORD_PASS)
 
-# Wait for submit button to be clickable and click
-submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
-submit_button.click()
-
-# Wait for any sign of login success
 try:
-    # Look for the profile icon or a page element that signifies being logged in
-    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='User Settings']")))  # Profile icon
-    print("Login successful!")
+    email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
+    pass_field = driver.find_element(by=By.NAME, value="password")
+    email_field.send_keys(DISCORD_EMAIL)
+    pass_field.send_keys(DISCORD_PASS)
+
+    # Wait for submit button to be clickable and click
+    submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
+    submit_button.click()
+
+    print("Login submitted, waiting for next steps...")
+
+    # Wait for any sign of login success
+    try:
+        # Look for the profile icon or a page element that signifies being logged in
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='User Settings']")))  # Profile icon
+        print("Login successful!")
+    except Exception as e:
+        print("Login failed or took too long. Error:", str(e))
+        # Additional step: Check if there's a CAPTCHA or other issue
+        try:
+            captcha_element = driver.find_element(By.XPATH, "//*[text()='I am human']")
+            print("Captcha detected: Please resolve manually.")
+        except:
+            print("No CAPTCHA detected, but login still failed.")
+        driver.quit()
+        exit(1)
+
 except Exception as e:
-    print("Login failed or took too long. Error:", str(e))
+    print("Error during login process:", str(e))
     driver.quit()
     exit(1)
 
