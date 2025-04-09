@@ -1,11 +1,12 @@
 # Imports
 import os
-import time
 import chromedriver_autoinstaller
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # Constants
 load_dotenv()
@@ -28,33 +29,32 @@ driver = webdriver.Chrome(options=options)
 driver.get("https://discord.com/login")
 
 # Discord Log-in
-time.sleep(2) # Page-Loading delay
-email_field = driver.find_element(by=By.NAME, value="email")
+wait = WebDriverWait(driver, 10)  # Explicit wait
+email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
 pass_field = driver.find_element(by=By.NAME, value="password")
 email_field.send_keys(DISCORD_EMAIL)
 pass_field.send_keys(DISCORD_PASS)
-time.sleep(2) # Page-Loading delay
-submit_button = driver.find_element(by= By.XPATH, value="//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")
+
+# Wait for submit button to be clickable and click
+submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
 submit_button.click()
 
 # Discord Navigation
-time.sleep(2) # Page-Loading delay
+wait.until(EC.url_contains("discord.com/channels"))
 driver.get(DISCORD_CHANNEL)
 
-
-# # Text Input Automation
-time.sleep(2) # Page-Loading delay
-channel_text_field = driver.find_element(by=By.CSS_SELECTOR, value="[aria-label='Message #mudae-s3']")
+# Text Input Automation
+channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Message #mudae-s3']")))
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
-time.sleep(2) # Page-Loading delay
+
+# Send next messages
 channel_text_field.send_keys('$daily')
 channel_text_field.send_keys(Keys.ENTER)
-time.sleep(2) # Page-Loading delay
+
 channel_text_field.send_keys('$dk')
 channel_text_field.send_keys(Keys.ENTER)
 
 # Close Browser
-time.sleep(2) # Page-Loading delay
 print('Mudae Automation Complete')
 driver.quit()
