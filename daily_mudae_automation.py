@@ -1,5 +1,6 @@
 # Imports
 import os
+import time
 import chromedriver_autoinstaller
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -47,11 +48,11 @@ driver.get(DISCORD_CHANNEL)
 channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Message #mudae-s3']")))
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
-
+time.sleep(2) # Delay for Bot to register
 # Send next messages
 channel_text_field.send_keys('$daily')
 channel_text_field.send_keys(Keys.ENTER)
-
+time.sleep(2) # Delay for Bot to register
 channel_text_field.send_keys('$dk')
 channel_text_field.send_keys(Keys.ENTER)
 
