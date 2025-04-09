@@ -50,8 +50,13 @@ try:
     submit_button.click()
     print(f"Logged in. Current URL: {driver.current_url}")
 
-    # Wait for page to load and navigate to the channel
-    WebDriverWait(driver, 10).until(EC.url_contains("https://discord.com/channels/"))
+    # Wait for Discord to redirect and log in successfully
+    WebDriverWait(driver, 20).until(EC.url_contains("https://discord.com/channels/"))
+
+    # Confirm we are on the right page
+    print(f"Successfully navigated to: {driver.current_url}")
+
+    # Navigate to the desired channel
     driver.get(DISCORD_CHANNEL)
 
     # Wait for the text input field to become active
