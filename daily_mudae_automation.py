@@ -29,7 +29,7 @@ driver = webdriver.Chrome(options=options)
 driver.get("https://discord.com/login")
 
 # Discord Log-in
-wait = WebDriverWait(driver, 10)  # Explicit wait
+wait = WebDriverWait(driver, 15)  # Explicit wait increased to 15 seconds
 email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
 pass_field = driver.find_element(by=By.NAME, value="password")
 email_field.send_keys(DISCORD_EMAIL)
@@ -39,8 +39,17 @@ pass_field.send_keys(DISCORD_PASS)
 submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
 submit_button.click()
 
+# Wait for any sign of login success
+try:
+    # Look for the profile icon or a page element that signifies being logged in
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='User Settings']")))  # Profile icon
+    print("Login successful!")
+except Exception as e:
+    print("Login failed or took too long. Error:", str(e))
+    driver.quit()
+    exit(1)
+
 # Discord Navigation
-wait.until(EC.url_contains("discord.com/channels"))
 driver.get(DISCORD_CHANNEL)
 
 # Text Input Automation
@@ -48,12 +57,12 @@ channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,
 channel_text_field.send_keys('$tu')
 channel_text_field.send_keys(Keys.ENTER)
 
-# # Send next messages
-# channel_text_field.send_keys('$daily')
-# channel_text_field.send_keys(Keys.ENTER)
+# Send next messages
+channel_text_field.send_keys('$daily')
+channel_text_field.send_keys(Keys.ENTER)
 
-# channel_text_field.send_keys('$dk')
-# channel_text_field.send_keys(Keys.ENTER)
+channel_text_field.send_keys('$dk')
+channel_text_field.send_keys(Keys.ENTER)
 
 # Close Browser
 print('Mudae Automation Complete')
