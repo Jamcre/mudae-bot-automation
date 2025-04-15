@@ -15,3 +15,12 @@
 2025-04-15 19:06:56 - INFO - Driver quit, script finished.
 2025-04-15 19:06:56 - INFO - --------------------------------------------------
 2025-04-15 19:06:58 - INFO - Logs pushed to remote repository successfully.
+2025-04-15 19:08:39 - INFO - Script started.
+2025-04-15 19:08:39 - INFO - Total executions: 5
+2025-04-15 19:08:39 - INFO - Loading environment variables
+2025-04-15 19:08:39 - INFO - Environment variables loaded successfully
+2025-04-15 19:08:47 - INFO - Successfully found the Discord channel input field
+2025-04-15 19:08:47 - ERROR - An error occurred: name 'commands' is not defined
+2025-04-15 19:08:49 - INFO - Driver quit, script finished.
+2025-04-15 19:08:50 - INFO - Logs pushed to remote repository successfully.
+2025-04-15 19:08:50 - INFO - --------------------------------------------------
