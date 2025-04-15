@@ -1,11 +1,11 @@
 # Imports
 import os
 import time
-import chromedriver_autoinstaller
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -13,19 +13,13 @@ from selenium.webdriver.support import expected_conditions as EC
 load_dotenv()
 DISCORD_EMAIL = os.getenv("DISCORD_EMAIL")
 DISCORD_PASS = os.getenv("DISCORD_PASS")
-DISCORD_CHANNEL = "https://discord.com/channels/756710284298551346/1225299689994321951"
+DISCORD_CHANNEL = os.getenv("DISCORD_CHANNEL")
 
-# Install Chrome driver
-chromedriver_autoinstaller.install()
-
-# Chrome options
-options = webdriver.ChromeOptions()
-options.add_argument("--headless=new")  # Modern headless mode
-options.add_argument("--window-size=1200,800")
-options.add_argument("--disable-gpu")
+options = Options()
+options.add_argument("--headless")  # Run in headless mode
 options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
-# Create Chrome driver
 driver = webdriver.Chrome(options=options)
 driver.get("https://discord.com/login")
 
@@ -46,15 +40,14 @@ driver.get(DISCORD_CHANNEL)
 
 # Text Input Automation
 channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Message #mudae-s3']")))
-channel_text_field.send_keys('$tu')
-channel_text_field.send_keys(Keys.ENTER)
-time.sleep(2) # Delay for Bot to register
-# Send next messages
-channel_text_field.send_keys('$daily')
-channel_text_field.send_keys(Keys.ENTER)
-time.sleep(2) # Delay for Bot to register
-channel_text_field.send_keys('$dk')
-channel_text_field.send_keys(Keys.ENTER)
+
+# Commands to send
+messages = ['tu', 'daily', 'dk']
+# Loop through Commands
+for message in messages:
+    channel_text_field.send_keys(message)
+    channel_text_field.send_keys(Keys.ENTER)
+    time.sleep(3)  # Delay for Bot to register
 
 # Close Browser
 print('Mudae Automation Complete')

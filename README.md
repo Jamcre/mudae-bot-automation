@@ -10,7 +10,6 @@ This repository automates interactions with the Mudae bot on Discord using **Sel
 
 - Automated login to Discord using credentials
 - Sends messages to a specified channel
-- Runs every 12 hours using GitHub Actions
 
 ## Setup
 
