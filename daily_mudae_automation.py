@@ -1,6 +1,7 @@
 # Imports
 import os
 import time
+import logging
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,10 +10,36 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+def setup_logging():
+    """Configure logging to write to mudae_automation.log with timestamp and level."""
+    logging.basicConfig(
+        filename='mudae_automation.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'  # <-- Add this line
+    )
+
+def track_execution_count(counter_file='execution_count.txt'):
+    """Read, increment, and save the total script execution count."""
+    count = 0
+    if os.path.exists(counter_file):
+        with open(counter_file, 'r') as f:
+            try:
+                count = int(f.read().strip())
+            except ValueError:
+                count = 0
+    count += 1
+    with open(counter_file, 'w') as f:
+        f.write(str(count))
+    logging.info(f'Total executions: {count}')
+
 def load_secrets():
     """Load environment variables for Discord credentials and channel information."""
+    logging.info('Loading environment variables')
     load_dotenv()
-    return os.getenv("DISCORD_EMAIL"), os.getenv("DISCORD_PASS"), os.getenv("CHANNEL_URL"), os.getenv("CHANNEL_SELECTOR")
+    email, password, channel_url, channel_selector = os.getenv("DISCORD_EMAIL"), os.getenv("DISCORD_PASS"), os.getenv("CHANNEL_URL"), os.getenv("CHANNEL_SELECTOR")
+    logging.info('Environment variables loaded successfully')
+    return email, password, channel_url, channel_selector
 
 def create_driver():
     """Create and configure a headless Chrome WebDriver instance."""
@@ -53,6 +80,7 @@ def navigate_to_discord_channel(driver, email, password, channel_url, channel_se
     driver.get(channel_url)
 
     channel_text_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, channel_selector)))
+    logging.info('Successfully found the Discord channel input field')
     return channel_text_field
 
 def send_commands(channel_text_field):
@@ -67,17 +95,27 @@ def send_commands(channel_text_field):
         channel_text_field.send_keys(command)
         channel_text_field.send_keys(Keys.ENTER)
         time.sleep(3)  # Delay for Bot to register
-    print("Commands Succesfully Sent, Mudae Automation Complete")
+    logging.info("Mudae commands executed successfully.")
 
 def main():
     """Main function to run the Mudae Discord automation."""
-    email, password, channel_url, channel_selector = load_secrets()
+    setup_logging()
+    logging.info('Script started.')
+    track_execution_count()
 
-    driver = create_driver()
-    channel_text_field = navigate_to_discord_channel(driver, email, password, channel_url, channel_selector)
-    send_commands(channel_text_field)
 
-    driver.quit()
+    try:
+        email, password, channel_url, channel_selector = load_secrets()
+        driver = create_driver()
+        channel_text_field = navigate_to_discord_channel(driver, email, password, channel_url, channel_selector)
+        send_commands(channel_text_field)
+    except Exception as e:
+        logging.error(f'An error occurred: {e}')
+        logging.info('-' * 50)
+    finally:
+        driver.quit()
+        logging.info('Driver quit, script finished.')
+        logging.info('-' * 50)
 
 if __name__ == "__main__":
     main()
