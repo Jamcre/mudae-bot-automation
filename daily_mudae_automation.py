@@ -1,7 +1,11 @@
 # Imports
 import os
 import time
+import psutil
 import logging
+import datetime
+import subprocess
+
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,13 +14,26 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+def check_uptime():
+    boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
+    now = datetime.datetime.now()
+    uptime = now - boot_time
+
+    if uptime < datetime.timedelta(minutes=5) and uptime >= datetime.timedelta(minutes=2):
+        print("⚠️ System has been up for less than 5 minutes but more than 2 minute. Shutting down...")
+        subprocess.run(["shutdown", "/s", "/f", "/t", "0"], check=True)  # Initiates system shutdown
+    elif uptime < datetime.timedelta(minutes=2):
+        print("System uptime is less than 2 minute. Not shutting down.")
+    else:
+        print(f"System uptime is: {str(uptime).split('.')[0]}")
+
 def setup_logging():
     """Configure logging to write to mudae_automation.log with timestamp and level."""
     logging.basicConfig(
         filename='mudae_automation.log',
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'  # <-- Add this line
+        datefmt='%Y-%m-%d %H:%M:%S'
     )
 
 def track_execution_count(counter_file='execution_count.txt'):
@@ -32,6 +49,20 @@ def track_execution_count(counter_file='execution_count.txt'):
     with open(counter_file, 'w') as f:
         f.write(str(count))
     logging.info(f'Total executions: {count}')
+    return count
+
+def push_logs_to_repo(commit_message="Update logs after 50 script execution"):
+    """Commit and push log changes to the remote repository."""
+    try:
+        subprocess.run(["git", "add", "mudae_automation.log", "execution_count.txt"], check=True)
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+        subprocess.run(["git", "push"], check=True)
+        logging.info("LOGS PUSHED TO REMOTE REPOSITORY SUCCESSFULLY.")
+        logging.info('-' * 50)
+
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Git push failed: {e}")
+        logging.info('-' * 50)
 
 def load_secrets():
     """Load environment variables for Discord credentials and channel information."""
@@ -69,8 +100,8 @@ def navigate_to_discord_channel(driver, email, password, channel_url, channel_se
     
     wait = WebDriverWait(driver, 10)  # Explicit wait
     email_field = wait.until(EC.presence_of_element_located((By.NAME, "email")))
-    pass_field = driver.find_element(by=By.NAME, value="password")
-    submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='app-mount']/div[2]/div[1]/div[1]/div/div/div/div/form/div[2]/div/div[1]/div[2]/button[2]")))
+    pass_field = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+    submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@type='submit' and .//div[text()='Log In']]")))
 
     email_field.send_keys(email)
     pass_field.send_keys(password)
@@ -90,7 +121,10 @@ def send_commands(channel_text_field):
     Args:
         channel_text_field (WebElement): The message input field element.
     """
-    commands = ['tu', 'daily', 'dk']
+    # commands = ['','','']
+    # commands = ['$tu']
+    commands = ['$tu', '$daily', '$dk']
+    
     for command in commands:
         channel_text_field.send_keys(command)
         channel_text_field.send_keys(Keys.ENTER)
@@ -101,8 +135,7 @@ def main():
     """Main function to run the Mudae Discord automation."""
     setup_logging()
     logging.info('Script started.')
-    track_execution_count()
-
+    execution_count = track_execution_count()
 
     try:
         email, password, channel_url, channel_selector = load_secrets()
@@ -111,11 +144,18 @@ def main():
         send_commands(channel_text_field)
     except Exception as e:
         logging.error(f'An error occurred: {e}')
-        logging.info('-' * 50)
     finally:
-        driver.quit()
+        if driver:
+            driver.quit()
         logging.info('Driver quit, script finished.')
-        logging.info('-' * 50)
+        # Push every 50 executions
+        if execution_count % 50 == 0:
+            push_logs_to_repo()
+        else:
+            logging.info('-' * 50)
+        check_uptime()
+        print('Script Complete')
+
 
 if __name__ == "__main__":
     main()

@@ -1,40 +1,9 @@
-2025-04-15 18:59:22 - INFO - Script started.
-2025-04-15 18:59:22 - INFO - Total executions: 3
-2025-04-15 18:59:22 - INFO - Loading environment variables
-2025-04-15 18:59:22 - INFO - Environment variables loaded successfully
-2025-04-15 18:59:30 - INFO - Successfully found the Discord channel input field
-2025-04-15 18:59:34 - INFO - Mudae commands executed successfully.
-2025-04-15 18:59:36 - INFO - Driver quit, script finished.
-2025-04-15 18:59:36 - INFO - --------------------------------------------------
-2025-04-15 19:06:43 - INFO - Script started.
-2025-04-15 19:06:43 - INFO - Total executions: 4
-2025-04-15 19:06:43 - INFO - Loading environment variables
-2025-04-15 19:06:43 - INFO - Environment variables loaded successfully
-2025-04-15 19:06:51 - INFO - Successfully found the Discord channel input field
-2025-04-15 19:06:54 - INFO - Mudae commands executed successfully.
-2025-04-15 19:06:56 - INFO - Driver quit, script finished.
-2025-04-15 19:06:56 - INFO - --------------------------------------------------
-2025-04-15 19:06:58 - INFO - Logs pushed to remote repository successfully.
-2025-04-15 19:08:39 - INFO - Script started.
-2025-04-15 19:08:39 - INFO - Total executions: 5
-2025-04-15 19:08:39 - INFO - Loading environment variables
-2025-04-15 19:08:39 - INFO - Environment variables loaded successfully
-2025-04-15 19:08:47 - INFO - Successfully found the Discord channel input field
-2025-04-15 19:08:47 - ERROR - An error occurred: name 'commands' is not defined
-2025-04-15 19:08:49 - INFO - Driver quit, script finished.
-2025-04-15 19:08:50 - INFO - Logs pushed to remote repository successfully.
-2025-04-15 19:08:50 - INFO - --------------------------------------------------
-2025-04-15 19:13:29 - INFO - Script started.
-2025-04-15 19:13:29 - INFO - Total executions: 6
-2025-04-15 19:13:29 - INFO - Loading environment variables
-2025-04-15 19:13:29 - INFO - Environment variables loaded successfully
-2025-04-15 19:13:36 - INFO - Successfully found the Discord channel input field
-2025-04-15 19:13:39 - INFO - Mudae commands executed successfully.
-2025-04-15 19:13:41 - INFO - Driver quit, script finished.
-2025-04-15 19:13:42 - INFO - Logs pushed to remote repository successfully.
-2025-04-15 19:13:42 - INFO - --------------------------------------------------
-2025-04-15 20:53:31 - INFO - Script started.
-2025-04-15 20:53:31 - INFO - Total executions: 50
-2025-04-15 20:53:31 - INFO - Loading environment variables
-2025-04-15 20:53:31 - INFO - Environment variables loaded successfully
-2025-04-15 20:53:38 - INFO - Successfully found the Discord channel input field
+2025-04-15 21:48:12 - INFO - --------------------------------------------------
+2025-04-15 21:49:46 - INFO - Script started.
+2025-04-15 21:49:46 - INFO - Total executions: 1
+2025-04-15 21:49:46 - INFO - Loading environment variables
+2025-04-15 21:49:46 - INFO - Environment variables loaded successfully
+2025-04-15 21:49:56 - INFO - Successfully found the Discord channel input field
+2025-04-15 21:50:06 - INFO - Mudae commands executed successfully.
+2025-04-15 21:50:08 - INFO - Driver quit, script finished.
+2025-04-15 21:50:08 - INFO - --------------------------------------------------
