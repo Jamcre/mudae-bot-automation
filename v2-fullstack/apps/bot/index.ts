@@ -81,7 +81,19 @@ async function waitForNewMudaeMessage(page: Page, previousMessages: string[]) {
  * - Waits for a new Mudae response and logs it
  */
 async function main() {
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({
+    headless: false,
+    args: [
+      "--disable-blink-features=AutomationControlled",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-setuid-sandbox",
+      "--disable-infobars",
+      "--window-size=1280,720",
+      "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+    ],
+  });
   const context = await browser.newContext();
   const page = await context.newPage();
 
