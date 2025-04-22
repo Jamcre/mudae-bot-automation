@@ -3,6 +3,8 @@ import "dotenv/config";
 
 const EMAIL = process.env.DISCORD_EMAIL!;
 const PASSWORD = process.env.DISCORD_PASSWORD!;
+const SERVER_ID = process.env.DISCORD_SERVER_ID!;
+const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID!;
 
 async function main() {
   // Browser preparation
@@ -23,7 +25,18 @@ async function main() {
   await page.waitForSelector('[aria-label="Servers"]', { timeout: 10000 });
   console.log("✅ Logged in to Discord!");
 
-  // Wait so you can see the result before closing
+  await page.goto(`https://discord.com/channels/${SERVER_ID}/${CHANNEL_ID}`);
+
+  // Wait for message box to appear
+  await page.waitForSelector('[role="textbox"]', { timeout: 15000 });
+  console.log("✅ Ready to send commands!");
+
+  // Type and send '$tu', timers up, Mudae command
+  await page.fill('[role="textbox"]', "$tu");
+  await page.keyboard.press("Enter");
+  console.log("📤 Sent command: $tu");
+
+  // Wait to see what's going on before closing (for now)
   await page.waitForTimeout(30000);
   await browser.close();
 }
