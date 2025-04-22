@@ -73,6 +73,48 @@ async function waitForNewMudaeMessage(page: Page, previousMessages: string[]) {
 }
 
 /**
+ * Extracts claim-related information from a Mudae message, including whether
+ * claiming is possible right now and the claim cooldown period if applicable.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object containing the claim status and claim cooldown period (if any)
+ */
+function parseClaimInfo(message: string) {
+  const canClaim = message.includes("you can claim right now!");
+  const claimCooldownMatch = message.match(
+    /claim (?:reset is in|for another) ([^\n]+)/i
+  );
+  const claimCooldown = claimCooldownMatch
+    ? claimCooldownMatch[1].trim()
+    : null;
+
+  return {
+    canClaim,
+    claimCooldown,
+  };
+}
+
+/**
+ * Extracts roll-related information from a Mudae message, including the number
+ * of rolls left and the time remaining until the next roll reset.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object containing the number of rolls left and the time of next reset (if any)
+ */
+function parseRollInfo(message: string) {
+  const rollsMatch = message.match(/You have (\d+) rolls? left/i);
+  const rollsResetMatch = message.match(/Next rolls reset in (.+?)\./i);
+
+  const rollsLeft = rollsMatch ? parseInt(rollsMatch[1]) : null;
+  const rollsReset = rollsResetMatch ? rollsResetMatch[1] : null;
+
+  return {
+    rollsLeft,
+    rollsReset,
+  };
+}
+
+/**
  * Main execution function:
  * - Launches a Playwright browser instance
  * - Logs into Discord
@@ -115,13 +157,21 @@ async function main() {
   // Wait for a response from Mudae and capture it
   const newMessage = await waitForNewMudaeMessage(page, previousMessages);
 
-  // Output the result
   if (newMessage) {
     console.log("📥 Mudae responded:\n", newMessage);
+
+    const claimInfo = parseClaimInfo(newMessage);
+    console.log("🔍 Parsed Claim Info:");
+    console.log("✅ Can Claim:", claimInfo.canClaim);
+    console.log("⏳ Claim Cooldown:", claimInfo.claimCooldown);
+
+    const rollInfo = parseRollInfo(newMessage);
+    console.log("\n🎲 Parsed Roll Info:");
+    console.log("🎯 Rolls Left:", rollInfo.rollsLeft);
+    console.log("⏰ Rolls Reset In:", rollInfo.rollsReset);
   } else {
     console.log("❌ No new Mudae response found within timeout.");
   }
-
   // Temporary delay to allow inspection before closing the browser
   await page.waitForTimeout(5000);
   await browser.close();
