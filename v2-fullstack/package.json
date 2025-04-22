@@ -1,0 +1,15 @@
+{
+  "name": "mudae-bot-automation",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "echo 'Use workspace scripts individually (bot/api/dashboard)'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
