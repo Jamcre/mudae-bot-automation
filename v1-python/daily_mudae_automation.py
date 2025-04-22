@@ -140,7 +140,6 @@ def main():
             push_logs_to_repo()
         else:
             logging.info('-' * 50)
-        check_uptime()
         print('Script Complete')
 
 
