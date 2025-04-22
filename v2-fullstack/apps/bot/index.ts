@@ -115,6 +115,64 @@ function parseRollInfo(message: string) {
 }
 
 /**
+ * Parses a Mudae message to determine if the daily command ($daily) is available.
+ * If it's not available, extracts the cooldown time until it can be used again.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object indicating whether $daily can be used and the cooldown time (if any)
+ */
+function parseDailyInfo(message: string) {
+  const dailyAvailableRegex = /\$daily is available!?/i;
+  const dailyCooldownRegex = /Next \$daily reset in (.+?)\./i;
+
+  let canUseDaily = false;
+  let dailyCooldown: string | null = null;
+
+  if (dailyAvailableRegex.test(message)) {
+    canUseDaily = true;
+  } else {
+    const match = message.match(dailyCooldownRegex);
+    if (match) {
+      dailyCooldown = match[1];
+    }
+  }
+
+  return {
+    canUseDaily,
+    dailyCooldown,
+  };
+}
+
+/**
+ * Parses a Mudae message to check if the $dk command (daily kakera) is ready.
+ * If it's on cooldown, extracts the remaining time until it resets.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object indicating whether $dk is available and the cooldown time (if any)
+ */
+function parseDkInfo(message: string) {
+  const dkReadyRegex = /\$dk is ready!?/i;
+  const dkCooldownRegex = /Next \$dk in (.+?)\./i;
+
+  let canUseDk = false;
+  let dkCooldown: string | null = null;
+
+  if (dkReadyRegex.test(message)) {
+    canUseDk = true;
+  } else {
+    const match = message.match(dkCooldownRegex);
+    if (match) {
+      dkCooldown = match[1];
+    }
+  }
+
+  return {
+    canUseDk,
+    dkCooldown,
+  };
+}
+
+/**
  * Main execution function:
  * - Launches a Playwright browser instance
  * - Logs into Discord
@@ -169,6 +227,16 @@ async function main() {
     console.log("\n🎲 Parsed Roll Info:");
     console.log("🎯 Rolls Left:", rollInfo.rollsLeft);
     console.log("⏰ Rolls Reset In:", rollInfo.rollsReset);
+
+    const dailyInfo = parseDailyInfo(newMessage);
+    console.log("\n📅 Parsed $daily Info:");
+    console.log(`🔁 Can Use $daily: ${dailyInfo.canUseDaily}`);
+    console.log(`⏳ Daily Cooldown: ${dailyInfo.dailyCooldown}`);
+
+    const dkInfo = parseDkInfo(newMessage);
+    console.log("\n🐉 Parsed $dk Info:");
+    console.log(`✅ Can Use $dk: ${dkInfo.canUseDk}`);
+    console.log(`⏳ $dk Cooldown: ${dkInfo.dkCooldown}`);
   } else {
     console.log("❌ No new Mudae response found within timeout.");
   }
