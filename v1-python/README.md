@@ -6,14 +6,6 @@ This script logs into Discord, navigates to a specified channel, and executes da
 
 ## 📂 Project Structure
 
-.
-└── v1-python/
-├── daily_mudae_automation.py # Main automation script
-├── execution_count.txt # Tracks number of script executions
-├── mudae_automation.log # Log file with execution history
-├── requirements.txt # Python dependencies
-└── .env # Environment variables (user-provided)
-
 ## ⚙️ Features
 
 - Headless Chrome automation with Selenium
@@ -40,10 +32,10 @@ This script logs into Discord, navigates to a specified channel, and executes da
 3. **Create a `.env` file with your credentials:**:
 
    ```env
-   DISCORD_EMAIL=your_email@example.com
-   DISCORD_PASS=your_discord_password
-   CHANNEL_URL=https://discord.com/channels/...
-   CHANNEL_SELECTOR=div[role='textbox']  # This is typically the selector for the message input
+   DISCORD_EMAIL=[YOUR DISCORD EMAIL]
+   DISCORD_PASS=[YOUR DISCORD PASSWORD]
+   CHANNEL_URL=[URL OF THE DISCORD CHANNEL WHERE MUDAE IS]
+   CHANNEL_SELECTOR="[aria-label='Message {NAME OF THE DISCORD CHANNEL WHERE MUDAE IS}']"
    ```
 
 4. **Run the script:**:
