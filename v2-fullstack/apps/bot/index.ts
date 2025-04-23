@@ -173,6 +173,65 @@ function parseDkInfo(message: string) {
 }
 
 /**
+ * Parses a Mudae message to check if the $rt command (react reset timer) is available.
+ * If it's on cooldown, extracts the remaining time until it resets.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object indicating whether $rt is available and the cooldown time (if any)
+ */
+function parseRtInfo(message: string) {
+  const rtAvailableRegex = /\$rt is available!?/i;
+  const rtCooldownRegex =
+    /The cooldown of \$rt is not over\. Time left: (.+?) \(\$rtu\)/i;
+
+  let canUseRt = false;
+  let rtCooldown: string | null = null;
+
+  if (rtAvailableRegex.test(message)) {
+    canUseRt = true;
+  } else {
+    const match = message.match(rtCooldownRegex);
+    if (match) {
+      rtCooldown = match[1];
+    }
+  }
+
+  return {
+    canUseRt,
+    rtCooldown,
+  };
+}
+
+/**
+ * Parses a Mudae message to determine if voting is currently available.
+ * If not, extracts the cooldown time remaining until the next eligible vote.
+ *
+ * @param message - The text content of a Mudae message to parse
+ * @returns An object indicating whether voting is available and the cooldown time (if any)
+ */
+function parseVoteInfo(message: string) {
+  const voteAvailableRegex = /You may vote right now!?/i;
+  const voteCooldownRegex = /You may vote again in (.+?)\./i;
+
+  let canVote = false;
+  let voteCooldown: string | null = null;
+
+  if (voteAvailableRegex.test(message)) {
+    canVote = true;
+  } else {
+    const match = message.match(voteCooldownRegex);
+    if (match) {
+      voteCooldown = match[1];
+    }
+  }
+
+  return {
+    canVote,
+    voteCooldown,
+  };
+}
+
+/**
  * Main execution function:
  * - Launches a Playwright browser instance
  * - Logs into Discord
@@ -237,6 +296,16 @@ async function main() {
     console.log("\n🐉 Parsed $dk Info:");
     console.log(`✅ Can Use $dk: ${dkInfo.canUseDk}`);
     console.log(`⏳ $dk Cooldown: ${dkInfo.dkCooldown}`);
+
+    const rtInfo = parseRtInfo(newMessage);
+    console.log("\n⚡ Parsed $rt Info:");
+    console.log(`✅ Can Use $rt: ${rtInfo.canUseRt}`);
+    console.log(`⏳ $rt Cooldown: ${rtInfo.rtCooldown}`);
+
+    const voteInfo = parseVoteInfo(newMessage);
+    console.log("\n🗳️ Parsed $vote Info:");
+    console.log(`✅ Can Vote: ${voteInfo.canVote}`);
+    console.log(`⏳ Vote Cooldown: ${voteInfo.voteCooldown}`);
   } else {
     console.log("❌ No new Mudae response found within timeout.");
   }
