@@ -232,6 +232,23 @@ function parseVoteInfo(message: string) {
 }
 
 /**
+ * Parses all relevant cooldown info from a Mudae message in one call.
+ *
+ * @param message - The full Mudae response text
+ * @returns An object containing cooldown info for claim, rolls, $daily, $dk, $rt, and $vote
+ */
+function parseAllCooldowns(message: string) {
+  return {
+    claim: parseClaimInfo(message),
+    rolls: parseRollInfo(message),
+    daily: parseDailyInfo(message),
+    dk: parseDkInfo(message),
+    rt: parseRtInfo(message),
+    vote: parseVoteInfo(message),
+  };
+}
+
+/**
  * Main execution function:
  * - Launches a Playwright browser instance
  * - Logs into Discord
@@ -277,39 +294,36 @@ async function main() {
   if (newMessage) {
     console.log("📥 Mudae responded:\n", newMessage);
 
-    const claimInfo = parseClaimInfo(newMessage);
-    console.log("🔍 Parsed Claim Info:");
-    console.log("✅ Can Claim:", claimInfo.canClaim);
-    console.log("⏳ Claim Cooldown:", claimInfo.claimCooldown);
+    const allCooldowns = parseAllCooldowns(newMessage);
 
-    const rollInfo = parseRollInfo(newMessage);
-    console.log("\n🎲 Parsed Roll Info:");
-    console.log("🎯 Rolls Left:", rollInfo.rollsLeft);
-    console.log("⏰ Rolls Reset In:", rollInfo.rollsReset);
+    console.log("\n🧩 Unified Cooldown Info:");
+    console.log("\n🔍 Claim Info:");
+    console.log("✅ Can Claim:", allCooldowns.claim.canClaim);
+    console.log("⏳ Claim Cooldown:", allCooldowns.claim.claimCooldown);
 
-    const dailyInfo = parseDailyInfo(newMessage);
-    console.log("\n📅 Parsed $daily Info:");
-    console.log(`🔁 Can Use $daily: ${dailyInfo.canUseDaily}`);
-    console.log(`⏳ Daily Cooldown: ${dailyInfo.dailyCooldown}`);
+    console.log("\n🎲 Roll Info:");
+    console.log("🎯 Rolls Left:", allCooldowns.rolls.rollsLeft);
+    console.log("⏰ Rolls Reset In:", allCooldowns.rolls.rollsReset);
 
-    const dkInfo = parseDkInfo(newMessage);
-    console.log("\n🐉 Parsed $dk Info:");
-    console.log(`✅ Can Use $dk: ${dkInfo.canUseDk}`);
-    console.log(`⏳ $dk Cooldown: ${dkInfo.dkCooldown}`);
+    console.log("\n📅 $daily Info:");
+    console.log("🔁 Can Use $daily:", allCooldowns.daily.canUseDaily);
+    console.log("⏳ Daily Cooldown:", allCooldowns.daily.dailyCooldown);
 
-    const rtInfo = parseRtInfo(newMessage);
-    console.log("\n⚡ Parsed $rt Info:");
-    console.log(`✅ Can Use $rt: ${rtInfo.canUseRt}`);
-    console.log(`⏳ $rt Cooldown: ${rtInfo.rtCooldown}`);
+    console.log("\n🐉 $dk Info:");
+    console.log("✅ Can Use $dk:", allCooldowns.dk.canUseDk);
+    console.log("⏳ $dk Cooldown:", allCooldowns.dk.dkCooldown);
 
-    const voteInfo = parseVoteInfo(newMessage);
-    console.log("\n🗳️ Parsed $vote Info:");
-    console.log(`✅ Can Vote: ${voteInfo.canVote}`);
-    console.log(`⏳ Vote Cooldown: ${voteInfo.voteCooldown}`);
+    console.log("\n⚡ $rt Info:");
+    console.log("✅ Can Use $rt:", allCooldowns.rt.canUseRt);
+    console.log("⏳ $rt Cooldown:", allCooldowns.rt.rtCooldown);
+
+    console.log("\n🗳️ $vote Info:");
+    console.log("✅ Can Vote:", allCooldowns.vote.canVote);
+    console.log("⏳ Vote Cooldown:", allCooldowns.vote.voteCooldown);
   } else {
     console.log("❌ No new Mudae response found within timeout.");
   }
-  // Temporary delay to allow inspection before closing the browser
+
   await page.waitForTimeout(5000);
   await browser.close();
 }
